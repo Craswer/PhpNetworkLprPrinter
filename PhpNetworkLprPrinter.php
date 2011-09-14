@@ -66,6 +66,7 @@ class PhpNetworkLprPrinter{
 	 * Class constructor.
 	 *
 	 * @param	string	The printer's host
+	 * @param	integer	The printer's port
 	 * @since	1.0
 	 */
 	public function __construct($host, $port=515) {
@@ -77,25 +78,24 @@ class PhpNetworkLprPrinter{
 	 * Sets a message in the array $_debug
 	 *
 	 * @access	public
-	 * @param	string 	$message 	The name of the property
+	 * @param	string 	$message 	Message
 	 * @param	string  $type	 	Message's type, for example "message" or "error"
 	 * @since	1.0
  	 */
-	private function setMessage($message=""){
-		$this->_debug[]=array("message"=>$message, "time"=>time(), "type"=>"message");
+	private function setMessage($message="", $type="message"){
+		$this->_debug[]=array("message"=>$message, "time"=>time(), "type"=>$type);
 	}
    
 	/**
-	 * Sets a message in the array $_debug
+	 * Sets an error message in the array $_debug
 	 *
 	 * @access	public
-	 * @param	string 	$message 	The name of the property
-	 * @param	string  $type	 	Message's type, for example "message" or "error"
+	 * @param	string 	$error 	Error message
 	 * @since	1.0
  	 */
-	private function setError($message="", $type="message"){
-		$this->_debug[]=array("message"=>$message, "time"=>time(), "type"=>"error");
-		$this->_error_msg=$message;
+	private function setError($error=""){
+		$this->_debug[]=array("message"=>$error, "time"=>time(), "type"=>"error");
+		$this->_error_msg=$error;
 	}
    
 	/**
@@ -148,7 +148,7 @@ class PhpNetworkLprPrinter{
 	 * Gets the debug message
 	 *
 	 * @access	public
-	 * @return	array	Debug message
+	 * @return	array	Debug message array
 	 * @since	1.0
  	 */	 
 	public function getDebug(){
