@@ -11,7 +11,7 @@ include("PhpNetworkLprPrinter.php");
 
 echo "<h1>PhpNetworkLprPrinter example</h1>";
 
-$lpr = new PhpNetworkPrinter("192.168.1.136"); //Host of the printer here
+$lpr = new PhpNetworkLprPrinter("192.168.1.136"); //Host of the printer here
 $lpr->printText("Hello world!"); //Text here
 
 //Show debug trace
