@@ -168,6 +168,26 @@ class PhpNetworkLprPrinter{
 	}
    
 	/**
+	 * Makes de cfA (control string)
+	 *
+	 * @access	private
+	 * @return	string	cfA control String
+	 * @since	1.0
+ 	 */  
+	private function makecfA($jobid, $user){
+		$this->setMessage("Setting cfA control String");
+            
+		$hostname = $_SERVER['REMOTE_ADDR'];
+		$cfa  = "";
+		$cfa .= "H" . $hostname . "\n"; //hostname
+		$cfa .= "P" . $user . "\n"; //user
+		$cfA .= "fdfA" + $jobid + $hostname + "\n";
+		//TODO: Add more parameters. See http://www.faqs.org/rfcs/rfc1179.html 
+		
+		return $cfa;
+	}
+   
+	/**
 	 * Print a text message on network lpr printer
 	 *
 	 * @access	public
@@ -185,8 +205,8 @@ class PhpNetworkLprPrinter{
 			return false;
 		}else{
 			
-			$queue="patata";
-			$jobid=001;
+			$queue="defaultQueue"; //TODO: Change default queue
+			$jobid=001; //TODO: Autoincrement $jobid
 			
 			//Starting printer
 			fwrite($connection, chr(2).$queue."\n");
@@ -198,10 +218,9 @@ class PhpNetworkLprPrinter{
 					return false;
 				}
 				
-			//Write control file			
-            //TODO: Change control string to an external function
-            $user="PhpNetworkLprPrinter";
-            $ctrl = "H".$_SERVER['REMOTE_ADDR']."\nP".$user."\nfdfA".$jobid."\n";
+			//Write control file		
+			$user="PhpNetworkLprPrinter";	
+            $ctrl = $this->makecfA($jobid, $user);
             fwrite($connection, chr(2).strlen($ctrl)." cfA".$jobid.$user."\n");
             
 				$this->setMessage("Sending control file...");
