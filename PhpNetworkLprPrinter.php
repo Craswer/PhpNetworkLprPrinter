@@ -176,7 +176,7 @@ class PhpNetworkLprPrinter{
  	 */  
 	private function makecfA($jobid, $user){
 		$this->setMessage("Setting cfA control String");
-            
+			
 		$hostname = $_SERVER['REMOTE_ADDR'];
 		$cfa  = "";
 		$cfa .= "H" . $hostname . "\n"; //hostname
@@ -220,9 +220,9 @@ class PhpNetworkLprPrinter{
 				
 			//Write control file		
 			$user="PhpNetworkLprPrinter";	
-            $ctrl = $this->makecfA($jobid, $user);
-            fwrite($connection, chr(2).strlen($ctrl)." cfA".$jobid.$user."\n");
-            
+			$ctrl = $this->makecfA($jobid, $user);
+			fwrite($connection, chr(2).strlen($ctrl)." cfA".$jobid.$user."\n");
+			
 				$this->setMessage("Sending control file...");
 			
 				//Checking errors
