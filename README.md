@@ -1,5 +1,10 @@
-PhpNetworkLprPrinter - PHP Class to manage network printers via LPR standar (RFC 1179)
+PhpNetworkLprPrinter - Manage network printers via LPR in PHP
 ======================================================================================
+
+PHP class to manage network printers via LPR (Line Printer Daemon Protocol) standar. With this class
+you will able to print text without any drivers, you only need to put the host (ip) of the printer.
+
+Develope by Pedro Villena (craswer@gmail.com). http://www.craswer.net/
 
 Status
 ------
@@ -17,7 +22,7 @@ file in your program:
 	include("PhpNetworkLprPrinter.php");
 	
 Somewhere in your code you need to initialize the network printer.
-Here is an example of doing it with a printer located in 192.168.1.136:
+Here is an example of doing it with a printer located in host 192.168.1.136:
 
 	$lpr = new PhpNetworkLprPrinter("192.168.1.136");
 	
@@ -27,7 +32,7 @@ Or if you prefer, with port:
 	
 After initialize the printer, to print some text you need to write the following code:
 
-	$lpr->printText("Hello worldd!"); 
+	$lpr->printText("Hello world!"); 
 
 Debugging
 ---------
@@ -68,6 +73,3 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see http://www.gnu.org/licenses/
