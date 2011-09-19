@@ -13,24 +13,30 @@ Getting started
 
 Assuming you have downloaded the Class PhpNetworkLprPrinter.php, you can get started by including the
 file in your program:
+
 	include("PhpNetworkLprPrinter.php");
 	
 Somewhere in your code you need to initialize the network printer.
 Here is an example of doing it with a printer located in 192.168.1.136:
+
 	$lpr = new PhpNetworkLprPrinter("192.168.1.136");
 	
 Or if you prefer, with port:
+
 	$lpr = new PhpNetworkLprPrinter("192.168.1.136", 515);
 	
 After initialize the printer, to print some text you need to write the following code:
+
 	$lpr->printText("Hello worldd!"); 
 
 Debugging
 ---------
 If you like to debug the application, there is a function called "getDebug". 
+
 	$array_debug = $lpr->getDebug();
 
 This function return an array with the following structure:
+
 	Array
 	(
     [0] => Array
@@ -39,7 +45,6 @@ This function return an array with the following structure:
             [time] => timestamp
             [type] => message / error
         )
-
     [1] => Array
         (
             [message] => string
