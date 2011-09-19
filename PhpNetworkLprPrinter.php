@@ -222,10 +222,17 @@ class PhpNetworkLprPrinter{
 			//Checking errors
 			if (ord(fread($connection, 1)) != 0) {
 				$this->setError("Error while start print jobs on queue " . $queue);
+				//Close connection
+				fclose($connection);
 				return false;
 			}
+			
+			//Close connection
+			fclose($connection);
 		}
+		
 		return true;
+		
 	}
 	
 	/**
@@ -238,6 +245,13 @@ class PhpNetworkLprPrinter{
  	 */  
 	public function printText($text=""){
 		
+		//Initial data			
+		$queue="defaultQueue"; //TODO: Change default queue
+		$jobid=001; //TODO: Autoincrement $jobid
+		
+		//Print any waiting job
+		$this->printWaitingJobs($queue);
+		
 		//Connecting to the network printer
 		$connection = $this->connect();
 
@@ -245,14 +259,7 @@ class PhpNetworkLprPrinter{
 		if(!$connection){
 			$this->setError("Error in connection. Please change HOST or PORT.");
 			return false;
-		}else{
-						
-			$queue="defaultQueue"; //TODO: Change default queue
-			$jobid=001; //TODO: Autoincrement $jobid
-			
-			//Print any waiting job
-			$this->printWaitingJobs($queue);
-			
+		}else{						
 			//Starting printer
 			fwrite($connection, chr(2).$queue."\n");
 				$this->setMessage("Starting printer...");
@@ -260,6 +267,8 @@ class PhpNetworkLprPrinter{
 				//Checking errors
 				if (ord(fread($connection, 1)) != 0) {
 					$this->setError("Error while start printing on queue");
+					//Close connection
+					fclose($connection);
 					return false;
 				}
 				
@@ -272,6 +281,8 @@ class PhpNetworkLprPrinter{
 				//Checking errors
 				if (ord(fread($connection, 1)) != 0) {
 					$this->setError("Error while start sending control file");
+					//Close connection
+					fclose($connection);
 					return false;
 				}
 				
@@ -279,10 +290,11 @@ class PhpNetworkLprPrinter{
 				//Checking errors
 				if (ord(fread($connection, 1)) != 0) {
 					$this->setError("Error while sending control file");
+					//Close connection
+					fclose($connection);
 					return false;
 				}
 			
-				
 			//Send data string
 			fwrite($connection, chr(3).strlen($text)." dfA".$jobid."\n");   
 				$this->setMessage("Sending data...");
@@ -290,6 +302,8 @@ class PhpNetworkLprPrinter{
 				//Checking errors
 				if (ord(fread($connection, 1)) != 0) {
 					$this->setError("Error while sending control file");
+					//Close connection
+					fclose($connection);
 					return false;
 				}
 				
@@ -298,14 +312,17 @@ class PhpNetworkLprPrinter{
 				//Checking errors
 				if (ord(fread($connection, 1)) != 0) {
 					$this->setError("Error while sending control file");
+					//Close connection
+					fclose($connection);
 					return false;
 				}else{
 					$this->setMessage("Data received!!!");
 				}
 			
+			//Close connection
+			fclose($connection);
+			
 		}   
-
-
 	}
 	
 }
