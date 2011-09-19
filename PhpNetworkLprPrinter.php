@@ -2,6 +2,8 @@
 /*
  * Class PhpLprPrinter
  * Print your files via PHP with LPR network printer
+ * See http://www.faqs.org/rfcs/rfc1179.html to understand RFC 1179 - Line printer daemon protocol
+ * 
  * (C) Copyright 2011 Pedro Villena <craswer@gmail.com>
  * Licensed under the GNU GPL v3 license. See file COPYRIGHT for details. 
  */
@@ -36,13 +38,22 @@ class PhpNetworkLprPrinter{
 	var $_timeout = 30;
 	
 	/**
+	 * Username for printer
+	 * 
+	 * @var 	string
+	 * @access 	protected
+	 * @since	1.0
+	 */
+	var $_username = "PhpNetworkLprPrinter";
+	
+	/**
 	 * Error number if connection fails
 	 * 
 	 * @var 	integer
 	 * @access 	protected
 	 * @since	1.0
 	 */
-	private $_error_number;
+	var $_error_number;
 	
 	/**
 	 * Error message if connection fails
@@ -51,7 +62,7 @@ class PhpNetworkLprPrinter{
 	 * @access 	protected
 	 * @since	1.0
 	 */
-	private $_error_msg;
+	var $_error_msg;
 	
 	/**
 	 * Debug message
@@ -60,7 +71,7 @@ class PhpNetworkLprPrinter{
 	 * @access 	protected
 	 * @since	1.0
 	 */
-	private $_debug = array();
+	var $_debug = array();
 	
 	/**
 	 * Class constructor.
@@ -174,19 +185,49 @@ class PhpNetworkLprPrinter{
 	 * @return	string	cfA control String
 	 * @since	1.0
  	 */  
-	private function makecfA($jobid, $user){
+	private function makecfA($jobid){
 		$this->setMessage("Setting cfA control String");
 			
 		$hostname = $_SERVER['REMOTE_ADDR'];
 		$cfa  = "";
 		$cfa .= "H" . $hostname . "\n"; //hostname
-		$cfa .= "P" . $user . "\n"; //user
+		$cfa .= "P" . $this->_username . "\n"; //user
 		$cfA .= "fdfA" + $jobid + $hostname + "\n";
 		//TODO: Add more parameters. See http://www.faqs.org/rfcs/rfc1179.html 
 		
 		return $cfa;
 	}
-   
+  
+	/**
+	 * Print any waiting jobs
+	 * 
+	 * @access	private
+	 * @return	boolean	cfA control String
+	 * @since	1.0
+	 */
+	public function printWaitingJobs($queue) {
+
+		//Connecting to the network printer
+		$connection = $this->connect();
+		
+		//If fail, exit with false 
+		if(!$connection){
+			$this->setError("Error in connection. Please change HOST or PORT.");
+			return false;
+		}else{
+			//Print any waiting job
+			fwrite($connection, chr(1).$queue."\n");   
+			$this->setMessage("Print any waiting job...");
+		
+			//Checking errors
+			if (ord(fread($connection, 1)) != 0) {
+				$this->setError("Error while start print jobs on queue " . $queue);
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	/**
 	 * Print a text message on network lpr printer
 	 *
@@ -196,17 +237,21 @@ class PhpNetworkLprPrinter{
 	 * @since	1.0
  	 */  
 	public function printText($text=""){
-
+		
 		//Connecting to the network printer
 		$connection = $this->connect();
 
 		//If fail, exit with false 
 		if(!$connection){
+			$this->setError("Error in connection. Please change HOST or PORT.");
 			return false;
 		}else{
-			
+						
 			$queue="defaultQueue"; //TODO: Change default queue
 			$jobid=001; //TODO: Autoincrement $jobid
+			
+			//Print any waiting job
+			$this->printWaitingJobs($queue);
 			
 			//Starting printer
 			fwrite($connection, chr(2).$queue."\n");
@@ -218,10 +263,9 @@ class PhpNetworkLprPrinter{
 					return false;
 				}
 				
-			//Write control file		
-			$user="PhpNetworkLprPrinter";	
-			$ctrl = $this->makecfA($jobid, $user);
-			fwrite($connection, chr(2).strlen($ctrl)." cfA".$jobid.$user."\n");
+			//Write control file	
+			$ctrl = $this->makecfA($jobid);
+			fwrite($connection, chr(2).strlen($ctrl)." cfA".$jobid.$this->_username."\n");
 			
 				$this->setMessage("Sending control file...");
 			
