@@ -21,12 +21,12 @@ file in your program:
 
 	include("PhpNetworkLprPrinter.php");
 	
-Somewhere in your code you need to initialize the network printer.
-Here is an example of doing it with a printer located in host 192.168.1.136:
+Somewhere you need to initialize the network printer in your code.
+An example of doing it with a printer located in host 192.168.1.136:
 
 	$lpr = new PhpNetworkLprPrinter("192.168.1.136");
 	
-Or if you prefer, with port:
+Or if you prefer, including the port:
 
 	$lpr = new PhpNetworkLprPrinter("192.168.1.136", 515);
 	
